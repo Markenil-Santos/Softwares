@@ -1,13 +1,24 @@
 <?php
-echo "<html>
-<head>
-    <title>PHP Server Test</title>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-</head>
-<body>
-    <h1>PHP Server Test</h1>
-    <p>This is a simple PHP server test.</p> 
-</body>
-</html>"
+require "../vendor/autoload.php";
+require "../app/routes/routes.php";
+
+  try {
+    $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
+    $request = $_SERVER['REQUEST_METHOD'];
+    
+    if (!isset($router[$request])) {
+      throw new Exception("A routa não existe");
+    }
+
+    if (!array_key_exists($uri, $router[$request])) {
+      throw new Exception("A routa não existe");
+    }
+
+    $controller = $router[$request][$uri];
+    $controller();
+
+  } catch (Exception $e) {
+    $e->getMessage();
+  }
+
 ?>
